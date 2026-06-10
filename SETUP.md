@@ -42,13 +42,29 @@ op signin            # or enable the app integration (step 1)
 chezmoi apply
 ```
 
-Required 1Password items (vault `Private`):
+Required 1Password items (vault `Private`), named
+`setup - chezmoi - <machine> - <name>` where `<machine>` is `personal` or `work`.
+Create a set for each machine type you use:
 
 | Item | Fields |
 |------|--------|
-| `rclone telescope-s3` | `access_key_id`, `secret_access_key` |
-| `Forge server` | `hostname` |
-| `SSH id_ed25519` | document = private key (only if you opted in) |
+| `setup - chezmoi - <machine> - rclone telescope-s3` | `access_key_id`, `secret_access_key` |
+| `setup - chezmoi - <machine> - Forge` | `hostname` |
+| `setup - chezmoi - <machine> - SSH id_ed25519` | document = private key (only if you opted in) |
+
+Create them quickly with `op` (repeat with `<machine>` = `personal` then `work`):
+
+```sh
+M=personal   # or: M=work
+op item create --category="API Credential" --vault=Private \
+  --title="setup - chezmoi - $M - rclone telescope-s3" \
+  access_key_id=YOUR_KEY secret_access_key=YOUR_SECRET
+op item create --category="Secure Note" --vault=Private \
+  --title="setup - chezmoi - $M - Forge" hostname=YOUR_HOST
+# only if managing the key:
+op document create ~/.ssh/id_ed25519 --vault=Private \
+  --title="setup - chezmoi - $M - SSH id_ed25519"
+```
 
 ## 4. Manual follow-ups
 

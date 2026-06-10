@@ -1,0 +1,6 @@
+# Static template data shared across templates.
+# 1Password item naming convention for setup credentials:
+#   "<opPrefix> - <machine> - <credential>"  e.g. "setup - chezmoi - work - Forge"
+# This lets each machine type (personal/work) have its own parallel set of items.
+opVault: "Private"
+opPrefix: "setup - chezmoi"

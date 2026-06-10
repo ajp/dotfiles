@@ -1,11 +1,12 @@
-{{- /* Personal hosts. Secret/sensitive host details come from 1Password so they
-       never land in the repo. Create a 1Password item "Forge server" with a
-       "hostname" field (see SETUP.md). 00-defaults sets `IdentitiesOnly yes`,
-       so every host that needs a non-default key MUST list IdentityFile. */ -}}
+{{- /* Personal hosts. Sensitive host details come from 1Password so they never
+       land in the repo. 1Password item: "<opPrefix> - <machine> - Forge"
+       e.g. "setup - chezmoi - work - Forge" with a "hostname" field (see
+       SETUP.md). 00-defaults sets `IdentitiesOnly yes`, so every host that needs
+       a non-default key MUST list IdentityFile. */ -}}
 
 # --- Personal server (Forge) ---
 Host ajp.net pshosting forge
-    HostName {{ onepasswordRead "op://Private/Forge server/hostname" }}
+    HostName {{ onepasswordRead (printf "op://%s/%s - %s - Forge/hostname" .opVault .opPrefix .machine) }}
     User forge
     IdentityFile ~/.ssh/id_rsa
 

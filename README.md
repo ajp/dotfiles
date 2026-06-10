@@ -62,16 +62,20 @@ Add a new file to management: `chezmoi add ~/.config/foo/bar`.
 ## Secrets (1Password)
 
 Templates ending in `.tmpl` pull secrets via the `op` CLI at apply time — nothing
-secret is ever stored in this repo. Required 1Password items:
+secret is ever stored in this repo. Items follow the naming convention
+**`setup - chezmoi - <machine> - <name>`** (prefix + vault set in
+`.chezmoidata.yaml`), so each machine type pulls its own set — create the items
+for every machine type you use (`personal` and/or `work`):
 
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
-| `rclone telescope-s3` | `access_key_id`, `secret_access_key` | rclone config |
-| `Forge server` | `hostname` | ssh `10-personal` |
-| `SSH id_ed25519` | document = the private key | ssh key (only if you opt in) |
+| `setup - chezmoi - <machine> - rclone telescope-s3` | `access_key_id`, `secret_access_key` | rclone config |
+| `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
+| `setup - chezmoi - <machine> - SSH id_ed25519` | document = the private key | ssh key (only if you opt in) |
 
-Sign in with `op signin` (or enable the 1Password app's CLI integration) before
-`chezmoi apply`.
+Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
+machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or
+enable the 1Password app's CLI integration) before `chezmoi apply`.
 
 ## Packages
 

@@ -1,12 +1,14 @@
 {{- /* AWS credentials pulled from 1Password at apply time — never stored in the repo.
-       Create a 1Password item named "rclone telescope-s3" with fields
-       access_key_id and secret_access_key (see SETUP.md). */ -}}
+       1Password item: "<opPrefix> - <machine> - rclone telescope-s3"
+       e.g. "setup - chezmoi - work - rclone telescope-s3"
+       with fields access_key_id and secret_access_key (see SETUP.md). */ -}}
+{{- $item := printf "op://%s/%s - %s - rclone telescope-s3" .opVault .opPrefix .machine -}}
 [telescope-s3]
 type = s3
 provider = AWS
 env_auth = false
-access_key_id = {{ onepasswordRead "op://Private/rclone telescope-s3/access_key_id" }}
-secret_access_key = {{ onepasswordRead "op://Private/rclone telescope-s3/secret_access_key" }}
+access_key_id = {{ onepasswordRead (printf "%s/access_key_id" $item) }}
+secret_access_key = {{ onepasswordRead (printf "%s/secret_access_key" $item) }}
 region = us-east-1
 location_constraint = us-west-1
 acl = private
