@@ -13,7 +13,8 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 On first run chezmoi prompts for: **name**, **git email**, **machine type**
 (`personal` / `work`), and whether to **manage SSH keys from 1Password**. Then it:
 
-1. **before** — install Xcode CLT, Rosetta, Homebrew, and 1Password CLI
+1. **before** — install Xcode CLT, Rosetta, Homebrew, and 1Password (app + CLI),
+   then pause until `op` can authenticate so secrets render on the first pass
 2. **externals** — clone Oh-My-Zsh, Powerlevel10k, and zsh plugins (kept updated)
 3. **apply dotfiles** — zsh, git, tmux, p10k, ssh, ddev, gh, iTerm2
    (secrets rendered from 1Password)

@@ -1,9 +1,11 @@
 #!/bin/bash
-# Bootstrap the minimum needed BEFORE chezmoi applies dotfiles:
+# Step 0 — runs BEFORE chezmoi applies any dotfiles. Installs the prerequisites
+# the secret templates depend on:
 #   - Xcode Command Line Tools (git, compilers)
 #   - Rosetta 2 (Apple Silicon)
 #   - Homebrew
-#   - 1password-cli (op) — required so secret templates (ssh) can render
+#   - 1Password desktop app + CLI (op), then waits until op can authenticate so
+#     the ssh/Forge templates render on the first pass.
 set -euo pipefail
 
 echo "==> Xcode Command Line Tools"
@@ -26,9 +28,31 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew/bin/brew{{ else }}/usr/local/bin/brew{{ end }} shellenv)"
 
-echo "==> 1Password CLI (needed for secret templates)"
+echo "==> 1Password (desktop app + CLI)"
+if [ ! -d "/Applications/1Password.app" ]; then
+  brew install --cask 1password
+fi
 if ! command -v op >/dev/null 2>&1; then
   brew install --cask 1password-cli
 fi
 
-echo "==> Bootstrap complete. If secrets don't populate, run 'op signin' then 'chezmoi apply'."
+# Secret templates render immediately after this script, so op must be able to
+# authenticate now. `op vault list` triggers the app/biometric unlock if ready.
+if ! op vault list >/dev/null 2>&1; then
+  cat <<'MSG'
+
+==> 1Password CLI isn't authenticated yet. To populate secrets on this pass:
+      1. Open 1Password and sign in.
+      2. Settings -> Developer -> enable "Integrate with 1Password CLI".
+    (CLI-only alternative: run  eval "$(op signin)"  in another terminal.)
+
+MSG
+  if [ -t 0 ]; then
+    while ! op vault list >/dev/null 2>&1; do
+      read -r -p "Press Enter once 1Password CLI is ready (Ctrl-C to skip)... " _ || break
+    done
+    echo "==> 1Password CLI ready."
+  else
+    echo "Non-interactive run — finish 1Password setup, then re-run 'chezmoi apply'."
+  fi
+fi

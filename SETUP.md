@@ -4,9 +4,11 @@ Provisioning a fresh macOS machine with chezmoi.
 
 ## 1. Prereqs you bring with you
 
-- **1Password**: sign into the desktop app, and enable
-  *Settings → Developer → Integrate with 1Password CLI* (so `op` works without a
-  separate signin). The secret templates need this.
+- **1Password account creds** (email + Secret Key, or your Emergency Kit). You do
+  **not** need 1Password pre-installed — the bootstrap installs the app + CLI for
+  you and then pauses: open 1Password, sign in, enable *Settings → Developer →
+  Integrate with 1Password CLI*, and press Enter to continue. Secrets then render
+  on the first pass.
 - **SSH keys**: two options —
   - *Automated*: store your private key as a 1Password **document** in an item
     named `SSH id_ed25519`, then answer **yes** to "Manage SSH keys?" at init.
