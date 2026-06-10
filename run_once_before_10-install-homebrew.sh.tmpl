@@ -1,0 +1,34 @@
+#!/bin/bash
+# Bootstrap the minimum needed BEFORE chezmoi applies dotfiles:
+#   - Xcode Command Line Tools (git, compilers)
+#   - Rosetta 2 (Apple Silicon)
+#   - Homebrew
+#   - 1password-cli (op) — required so secret templates (rclone, ssh) can render
+set -euo pipefail
+
+echo "==> Xcode Command Line Tools"
+if ! xcode-select -p >/dev/null 2>&1; then
+  xcode-select --install || true
+  echo "Complete the CLT install, then re-run chezmoi."
+  exit 1
+fi
+
+{{ if eq .chezmoi.arch "arm64" -}}
+echo "==> Rosetta 2"
+if ! /usr/bin/pgrep -q oahd; then
+  softwareupdate --install-rosetta --agree-to-license
+fi
+{{ end -}}
+
+echo "==> Homebrew"
+if ! command -v brew >/dev/null 2>&1; then
+  NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew/bin/brew{{ else }}/usr/local/bin/brew{{ end }} shellenv)"
+
+echo "==> 1Password CLI (needed for secret templates)"
+if ! command -v op >/dev/null 2>&1; then
+  brew install --cask 1password-cli
+fi
+
+echo "==> Bootstrap complete. If secrets don't populate, run 'op signin' then 'chezmoi apply'."

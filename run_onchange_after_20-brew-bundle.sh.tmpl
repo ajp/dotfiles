@@ -1,0 +1,11 @@
+#!/bin/bash
+# Install everything from the Brewfile. Runs again automatically whenever the
+# Brewfile changes (the hash below changes, re-triggering run_onchange).
+#
+# Brewfile hash: {{ include "Brewfile" | sha256sum }}
+set -euo pipefail
+
+eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew/bin/brew{{ else }}/usr/local/bin/brew{{ end }} shellenv)"
+
+echo "==> brew bundle (this is the slow step; output streams below)"
+brew bundle install --file="{{ .chezmoi.sourceDir }}/Brewfile" --no-upgrade

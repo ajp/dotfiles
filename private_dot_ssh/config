@@ -1,0 +1,15 @@
+# =============================================================================
+# SSH Configuration
+# =============================================================================
+# This file includes all configs from config.d/
+#
+# Structure:
+#   ~/.ssh/config.d/00-defaults     - General SSH settings (tracked)
+#   ~/.ssh/config.d/10-personal     - Personal hosts (tracked or not)
+#   ~/.ssh/config.d/20-work         - Work hosts (NOT tracked)
+#
+# Files are loaded in alphabetical order.
+# Create ~/.ssh/config.d/99-local for machine-specific overrides.
+# =============================================================================
+
+Include config.d/*

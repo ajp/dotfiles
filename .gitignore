@@ -1,0 +1,18 @@
+# chezmoi dotfiles repo (the chezmoi source directory).
+# Secrets are pulled from 1Password at apply time via templates — no plaintext
+# secret files live here. These rules are defensive in case one ever lands.
+
+# Private keys / credentials — never commit
+*id_rsa*
+*id_ed25519*
+*.pem
+*.key
+*.p12
+known_hosts*
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

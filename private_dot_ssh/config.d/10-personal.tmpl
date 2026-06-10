@@ -1,0 +1,17 @@
+{{- /* Personal hosts. Secret/sensitive host details come from 1Password so they
+       never land in the repo. Create a 1Password item "Forge server" with a
+       "hostname" field (see SETUP.md). 00-defaults sets `IdentitiesOnly yes`,
+       so every host that needs a non-default key MUST list IdentityFile. */ -}}
+
+# --- Personal server (Forge) ---
+Host ajp.net pshosting forge
+    HostName {{ onepasswordRead "op://Private/Forge server/hostname" }}
+    User forge
+    IdentityFile ~/.ssh/id_rsa
+
+# --- AWS / telescope (uses the .pem key, not id_rsa) ---
+# Uncomment and set the real host when needed:
+# Host telescope
+#     HostName ec2-XX-XX-XX-XX.compute-1.amazonaws.com
+#     User ec2-user
+#     IdentityFile ~/.ssh/telescope.pem
