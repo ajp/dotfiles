@@ -7,9 +7,14 @@ Provisioning a fresh macOS machine with chezmoi.
 - **1Password**: sign into the desktop app, and enable
   *Settings → Developer → Integrate with 1Password CLI* (so `op` works without a
   separate signin). The secret templates need this.
-- **SSH keys**: not in this repo. Copy them over securely (AirDrop / 1Password /
-  `scp`) or generate fresh, then `chmod 600 ~/.ssh/id_* ~/.ssh/*.pem`. GitHub
-  itself needs no key — `gh auth login` uses HTTPS + keychain.
+- **SSH keys**: two options —
+  - *Automated*: store your private key as a 1Password **document** in an item
+    named `SSH id_ed25519`, then answer **yes** to "Manage SSH keys?" at init.
+    chezmoi writes `~/.ssh/id_ed25519` (0600) on apply.
+    Add more keys (id_rsa, telescope.pem) the same way.
+  - *Manual*: answer **no**, then copy keys over securely (AirDrop / `scp`) and
+    `chmod 600 ~/.ssh/id_* ~/.ssh/*.pem`.
+  - GitHub itself needs no key — `gh auth login` uses HTTPS + keychain.
 
 ## 2. One command
 
@@ -17,9 +22,10 @@ Provisioning a fresh macOS machine with chezmoi.
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
 
-This installs chezmoi, clones `github.com/ajp/dotfiles`, prompts for your git
-name/email, then runs the full flow (Homebrew → dotfiles → brew bundle → OMZ →
-shell → macOS → iTerm2).
+This installs chezmoi, clones `github.com/ajp/dotfiles`, prompts for **name,
+git email, machine type (personal/work), and SSH-key management**, then runs the
+full flow (Homebrew → externals/OMZ → dotfiles → brew bundle → shell → macOS →
+iTerm2).
 
 > If Xcode Command Line Tools aren't installed, the first run will trigger their
 > install and stop — finish that, then re-run the command.
@@ -42,6 +48,7 @@ Required 1Password items (vault `Private`):
 |------|--------|
 | `rclone telescope-s3` | `access_key_id`, `secret_access_key` |
 | `Forge server` | `hostname` |
+| `SSH id_ed25519` | document = private key (only if you opted in) |
 
 ## 4. Manual follow-ups
 

@@ -2,13 +2,17 @@
 # Secrets are pulled from 1Password at apply time via templates — no plaintext
 # secret files live here. These rules are defensive in case one ever lands.
 
-# Private keys / credentials — never commit
+# Private keys / credentials — never commit raw key material.
 *id_rsa*
 *id_ed25519*
 *.pem
 *.key
 *.p12
 known_hosts*
+
+# ...but chezmoi templates (*.tmpl) hold only 1Password references, not keys,
+# so they MUST be tracked. (Raw keys never end in .tmpl.)
+!*.tmpl
 
 # macOS
 .DS_Store

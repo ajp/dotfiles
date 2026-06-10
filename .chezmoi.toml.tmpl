@@ -1,11 +1,21 @@
 {{- $name := promptStringOnce . "name" "Full name" -}}
 {{- $email := promptStringOnce . "email" "Git email" -}}
+{{- $machine := promptChoiceOnce . "machine" "Machine type" (list "personal" "work") -}}
+{{- $sshKeys := promptBoolOnce . "manageSshKeys" "Manage SSH keys from 1Password?" false -}}
 
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
+    machine = {{ $machine | quote }}
+    manageSshKeys = {{ $sshKeys }}
 
-# 1Password: secret templates use `op`. Sign in with `op signin` (or enable the
-# 1Password app's CLI integration) before `chezmoi apply` so they can render.
+# Auto-commit (and push) changes made via `chezmoi edit` / `chezmoi add`, so the
+# source repo stays in sync across machines.
+[git]
+    autoCommit = true
+    autoPush = true
+
+# 1Password: secret templates use `op`. Sign in (or enable the app's CLI
+# integration) before `chezmoi apply` so they can render.
 [onepassword]
     mode = "account"

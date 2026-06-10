@@ -1,0 +1,4 @@
+{{- /* Private SSH key pulled from a 1Password document named "SSH id_ed25519".
+       Only rendered when manageSshKeys=true (see .chezmoiignore). Add more keys
+       (id_rsa, telescope.pem) the same way. */ -}}
+{{ onepasswordDocument "SSH id_ed25519" }}

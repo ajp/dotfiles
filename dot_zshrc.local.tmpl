@@ -1,5 +1,5 @@
 # ~/.zshrc.local — machine/work-specific shell config (managed by chezmoi).
-# Sourced at the end of ~/.zshrc. Server SSH shortcuts now live in
+# Sourced at the end of ~/.zshrc. Server SSH shortcuts live in
 # ~/.ssh/config.d/10-personal (so `ssh ajp.net` works without an alias).
 
 # Editor override (default is `code -w` in .zshrc)
@@ -9,7 +9,14 @@
 # alias python='python3.12'
 
 # -----------------------------------------------------------------------------
-# Brightly coding-container
+# Project directory shortcuts
+# -----------------------------------------------------------------------------
+alias sites="cd ~/Sites/"
+alias sitesp="cd ~/Sites/Personal/"
+alias sitesps="cd ~/Sites/PrettySquares/"
+{{ if eq .machine "work" }}
+# -----------------------------------------------------------------------------
+# Brightly coding-container (work machines only)
 # -----------------------------------------------------------------------------
 export CODE_CONTAINER_PATH="$HOME/Sites/Brightly/coding-container-main"  # adjust if cloned elsewhere
 if [[ -d "$CODE_CONTAINER_PATH" ]]; then
@@ -17,10 +24,4 @@ if [[ -d "$CODE_CONTAINER_PATH" ]]; then
   alias ccvalidate="${CODE_CONTAINER_PATH}/bin/validate"
   alias ccbuild='docker compose --project-directory "${CODE_CONTAINER_PATH}" build --pull --no-cache codex claude'
 fi
-
-# -----------------------------------------------------------------------------
-# Project directory shortcuts
-# -----------------------------------------------------------------------------
-alias sites="cd ~/Sites/"
-alias sitesp="cd ~/Sites/Personal/"
-alias sitesps="cd ~/Sites/PrettySquares/"
+{{ end -}}
