@@ -1,0 +1,61 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install chezmoi + shellcheck
+        run: |
+          sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "$HOME/.local/bin"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+          sudo apt-get update && sudo apt-get install -y shellcheck
+
+      - name: Stub `op` so secret templates render without 1Password
+        run: |
+          cat > "$HOME/.local/bin/op" <<'EOF'
+          #!/usr/bin/env bash
+          # CI stub: any op invocation returns a dummy value.
+          echo "ci-stub-value"
+          EOF
+          chmod +x "$HOME/.local/bin/op"
+
+      - name: Write a test chezmoi config
+        run: |
+          mkdir -p "$HOME/.config/chezmoi"
+          cat > "$HOME/.config/chezmoi/chezmoi.toml" <<EOF
+          sourceDir = "${{ github.workspace }}"
+          [data]
+          name = "CI"
+          email = "ci@example.com"
+          machine = "personal"
+          manageSshKeys = false
+          EOF
+
+      - name: chezmoi dry-run apply (renders every template)
+        run: |
+          chezmoi --destination "$(mktemp -d)" apply --dry-run --no-tty
+
+      - name: Shell syntax — plain run scripts
+        run: |
+          for f in run_*.sh; do echo "bash -n $f"; bash -n "$f"; done
+
+      - name: Shell syntax — rendered .tmpl scripts
+        run: |
+          for f in run_*.sh.tmpl; do
+            echo "render + bash -n $f"
+            chezmoi execute-template < "$f" | bash -n
+          done
+
+      - name: Shellcheck plain run scripts
+        run: shellcheck run_*.sh
+
+      - name: Validate JSON
+        run: |
+          for f in $(git ls-files '*.json'); do echo "jq $f"; jq -e . "$f" >/dev/null; done

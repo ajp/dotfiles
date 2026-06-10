@@ -55,6 +55,7 @@ Add a new file to management: `chezmoi add ~/.config/foo/bar`.
 | Terminal | `dot_tmux.conf`, `dot_config/iterm2/…` |
 | SSH | `private_dot_ssh/config`, `…/config.d/00-defaults`, `…/10-personal.tmpl` |
 | Tools | `dot_config/private_gh/…`, `dot_ddev/…` |
+| Claude Code | `dot_claude/settings.json` (settings only — not session/auth state) |
 | Packages | `Brewfile` (installed by `run_onchange_after_20-brew-bundle`) |
 | Externals | Oh-My-Zsh + p10k + plugins via `.chezmoiexternal.toml` |
 | Provisioning | `run_*` scripts (Homebrew, shell, macOS, iTerm2) |
