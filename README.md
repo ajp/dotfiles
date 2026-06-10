@@ -15,7 +15,7 @@ On first run chezmoi prompts for: **name**, **git email**, **machine type**
 
 1. **before** — install Xcode CLT, Rosetta, Homebrew, and 1Password CLI
 2. **externals** — clone Oh-My-Zsh, Powerlevel10k, and zsh plugins (kept updated)
-3. **apply dotfiles** — zsh, git, tmux, p10k, ssh, ddev, gh, rclone, iTerm2
+3. **apply dotfiles** — zsh, git, tmux, p10k, ssh, ddev, gh, iTerm2
    (secrets rendered from 1Password)
 4. **after** — `brew bundle` the full Brewfile, set zsh as default shell, apply
    macOS defaults, point iTerm2 at its prefs
@@ -54,7 +54,7 @@ Add a new file to management: `chezmoi add ~/.config/foo/bar`.
 | Git | `dot_gitconfig.tmpl` (identity from prompt), `dot_gitignore_global` |
 | Terminal | `dot_tmux.conf`, `dot_config/iterm2/…` |
 | SSH | `private_dot_ssh/config`, `…/config.d/00-defaults`, `…/10-personal.tmpl` |
-| Tools | `dot_config/private_gh/…`, `dot_config/private_rclone/…`, `dot_ddev/…` |
+| Tools | `dot_config/private_gh/…`, `dot_ddev/…` |
 | Packages | `Brewfile` (installed by `run_onchange_after_20-brew-bundle`) |
 | Externals | Oh-My-Zsh + p10k + plugins via `.chezmoiexternal.toml` |
 | Provisioning | `run_*` scripts (Homebrew, shell, macOS, iTerm2) |
@@ -69,9 +69,8 @@ for every machine type you use (`personal` and/or `work`):
 
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
-| `setup - chezmoi - <machine> - rclone telescope-s3` | `access_key_id`, `secret_access_key` | rclone config |
-| `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
 | `setup - chezmoi - <machine> - SSH id_ed25519` | document = the private key | ssh key (only if you opt in) |
+| `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
 
 Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
 machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or

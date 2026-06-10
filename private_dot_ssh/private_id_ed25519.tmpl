@@ -2,5 +2,5 @@
        "<opPrefix> - <machine> - SSH id_ed25519"
        e.g. "setup - chezmoi - work - SSH id_ed25519".
        Only rendered when manageSshKeys=true (see .chezmoiignore). Add more keys
-       (id_rsa, telescope.pem) the same way. */ -}}
+       (e.g. id_rsa) the same way. */ -}}
 {{ onepasswordDocument (printf "%s - %s - SSH id_ed25519" .opPrefix .machine) }}

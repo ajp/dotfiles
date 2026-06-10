@@ -8,11 +8,4 @@
 Host ajp.net pshosting forge
     HostName {{ onepasswordRead (printf "op://%s/%s - %s - Forge/hostname" .opVault .opPrefix .machine) }}
     User forge
-    IdentityFile ~/.ssh/id_rsa
-
-# --- AWS / telescope (uses the .pem key, not id_rsa) ---
-# Uncomment and set the real host when needed:
-# Host telescope
-#     HostName ec2-XX-XX-XX-XX.compute-1.amazonaws.com
-#     User ec2-user
-#     IdentityFile ~/.ssh/telescope.pem
+    IdentityFile ~/.ssh/id_ed25519
