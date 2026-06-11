@@ -1,11 +1,12 @@
-{{- /* Personal hosts. Sensitive host details come from 1Password so they never
-       land in the repo. 1Password item: "<opPrefix> - <machine> - Forge"
-       e.g. "setup - chezmoi - work - Forge" with a "hostname" field (see
-       SETUP.md). 00-defaults sets `IdentitiesOnly yes`, so every host that needs
-       a non-default key MUST list IdentityFile. */ -}}
+{{- /* Personal SSH hosts. None active right now — no 1Password lookups happen,
+   so this file applies without any extra items.
 
-# --- Personal server (Forge) ---
-# Key is served by the 1Password SSH agent (see 00-defaults), not a file.
-Host ajp.net pshosting forge
-    HostName {{ template "op-read" (dict "ctx" . "item" "Forge" "field" "hostname") }}
-    User forge
+   To add the Forge server later: create a 1Password item named
+   "<opPrefix> - <machine> - Forge" with a hostname field, then add a Host block
+   whose HostName uses the op-read template (see this file's git history for the
+   exact line). Keys are served by the 1Password SSH agent (00-defaults). */ -}}
+
+# --- Personal server (Forge) — disabled ---
+# Host ajp.net pshosting forge
+#     HostName <from 1Password>
+#     User forge

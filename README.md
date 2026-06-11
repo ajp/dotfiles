@@ -72,8 +72,8 @@ for every machine type you use (`personal` and/or `work`):
 
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
-| `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
 | `setup - chezmoi - SSH key` | SSH Key item (`public key`) | ssh agent + commit signing (shared across machines) |
+| `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` *(optional — disabled by default)* |
 
 Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
 machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or

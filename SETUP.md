@@ -45,20 +45,21 @@ Required 1Password items (vault `Private`), named
 `setup - chezmoi - <machine> - <name>` where `<machine>` is `personal` or `work`.
 Create a set for each machine type you use:
 
-| Item | Fields |
-|------|--------|
-| `setup - chezmoi - <machine> - Forge` | `hostname` |
+Secrets are minimal now — the only thing rendered from 1Password at apply time is
+the commit-signing key (`setup - chezmoi - SSH key`), and only if you opted in.
 
-Create it quickly with `op` (repeat with `<machine>` = `personal` then `work`):
+**Optional:** the Forge host in `10-personal` is disabled by default. To enable
+it, create `setup - chezmoi - <machine> - Forge` (field `hostname`) and restore
+the Host block (see notes in that file):
 
 ```sh
-M=personal   # or: M=work
+M=work   # or personal
 op item create --category="Secure Note" --vault=Private \
   --title="setup - chezmoi - $M - Forge" hostname=YOUR_HOST
 ```
 
-(SSH keys are separate — they're SSH Key items served by the agent, not created
-here. See *Setting up an SSH key* below.)
+(SSH keys are separate — SSH Key items served by the agent. See *Setting up an
+SSH key* below.)
 
 ## 4. Manual follow-ups
 
