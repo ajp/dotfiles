@@ -1,6 +1,0 @@
-{{- /* Private SSH key pulled from a 1Password document:
-       "<opPrefix> - <machine> - SSH id_ed25519"
-       e.g. "setup - chezmoi - work - SSH id_ed25519".
-       Only rendered when manageSshKeys=true (see .chezmoiignore). Add more keys
-       (e.g. id_rsa) the same way. */ -}}
-{{ onepasswordDocument (printf "%s - %s - SSH id_ed25519" .opPrefix .machine) }}

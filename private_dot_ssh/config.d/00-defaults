@@ -3,15 +3,19 @@
 # =============================================================================
 
 Host *
-    # Use macOS Keychain for passphrases
+    # 1Password SSH agent — keys live in 1Password and are served to ssh/git;
+    # the private key is never written to ~/.ssh. Enable it in the 1Password app:
+    # Settings -> Developer -> "Use the SSH agent".
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+    # macOS Keychain for any non-1Password on-disk keys you add manually
     UseKeychain yes
     AddKeysToAgent yes
-    IdentityFile ~/.ssh/id_ed25519
-    IdentityFile ~/.ssh/id_rsa
 
     # Connection settings
     ServerAliveInterval 60
     ServerAliveCountMax 3
 
-    # Security
-    IdentitiesOnly yes
+# NOTE: IdentitiesOnly is intentionally not set — it would hide the agent's keys.
+# If you accumulate many keys in 1Password and hit "too many authentication
+# failures", scope keys per-host in ~/.config/1Password/ssh/agent.toml.

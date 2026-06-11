@@ -1,13 +1,11 @@
 {{- $name := promptStringOnce . "name" "Full name" -}}
 {{- $email := promptStringOnce . "email" "Git email" -}}
 {{- $machine := promptChoiceOnce . "machine" "Machine type" (list "personal" "work") -}}
-{{- $sshKeys := promptBoolOnce . "manageSshKeys" "Manage SSH keys from 1Password?" false -}}
 
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
     machine = {{ $machine | quote }}
-    manageSshKeys = {{ $sshKeys }}
 
 # Auto-commit (and push) changes made via `chezmoi edit` / `chezmoi add`, so the
 # source repo stays in sync across machines.

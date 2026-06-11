@@ -1,12 +1,6 @@
 # Files that live in the source repo but must NOT be applied to $HOME.
 # (chezmoi already auto-ignores dotfiles like .git, .gitignore, .github.)
-# This file is itself a template, evaluated with the config data.
 Brewfile
 README.md
 SETUP.md
 LICENSE
-
-{{ if not .manageSshKeys -}}
-# SSH keys are opt-in (set manageSshKeys=true and store them in 1Password)
-.ssh/id_ed25519
-{{ end -}}

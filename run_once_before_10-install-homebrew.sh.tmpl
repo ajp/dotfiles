@@ -41,10 +41,11 @@ fi
 if ! op vault list >/dev/null 2>&1; then
   cat <<'MSG'
 
-==> 1Password CLI isn't authenticated yet. To populate secrets on this pass:
-      1. Open 1Password and sign in.
-      2. Settings -> Developer -> enable "Integrate with 1Password CLI".
-    (CLI-only alternative: run  eval "$(op signin)"  in another terminal.)
+==> 1Password isn't ready yet. Open 1Password, sign in, then under
+    Settings -> Developer enable BOTH:
+      - "Integrate with 1Password CLI"   (so secrets render)
+      - "Use the SSH agent"              (so ssh/git keys work)
+    (CLI-only alternative for secrets: run  eval "$(op signin)"  elsewhere.)
 
 MSG
   if [ -t 0 ]; then

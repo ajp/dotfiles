@@ -29,7 +29,8 @@ SSH keys).
 The answers above are stored per-machine, so the same repo configures each box
 differently. `machine = work` enables the Brightly container aliases; `personal`
 omits them. Extend the pattern with `{{ if eq .machine "work" }}…{{ end }}` in any
-`.tmpl`. SSH keys are only written when you opt in (and they exist in 1Password).
+`.tmpl`. SSH keys are served per-machine by the 1Password SSH agent, so each box
+can use its own key without anything being written to disk.
 
 Changes you make with `chezmoi edit` / `chezmoi add` are **auto-committed and
 pushed** (`[git] autoCommit/autoPush`), so machines stay in sync — `chezmoi
@@ -71,12 +72,16 @@ for every machine type you use (`personal` and/or `work`):
 
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
-| `setup - chezmoi - <machine> - SSH id_ed25519` | document = the private key | ssh key (only if you opt in) |
 | `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
 
 Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
 machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or
 enable the 1Password app's CLI integration) before `chezmoi apply`.
+
+**SSH keys** are *not* templated — they're served by the **1Password SSH agent**
+(enable *Settings → Developer → Use the SSH agent*). Store each key as an SSH Key
+item in 1Password; the private key is never written to disk. `00-defaults` points
+ssh at the agent socket.
 
 ## Packages
 

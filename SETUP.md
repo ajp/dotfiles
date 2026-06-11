@@ -6,16 +6,13 @@ Provisioning a fresh macOS machine with chezmoi.
 
 - **1Password account creds** (email + Secret Key, or your Emergency Kit). You do
   **not** need 1Password pre-installed — the bootstrap installs the app + CLI for
-  you and then pauses: open 1Password, sign in, enable *Settings → Developer →
-  Integrate with 1Password CLI*, and press Enter to continue. Secrets then render
-  on the first pass.
-- **SSH keys**: two options —
-  - *Automated*: store your private key as a 1Password **document** in an item
-    named `SSH id_ed25519`, then answer **yes** to "Manage SSH keys?" at init.
-    chezmoi writes `~/.ssh/id_ed25519` (0600) on apply.
-    Add more keys (e.g. `id_rsa`) the same way.
-  - *Manual*: answer **no**, then copy keys over securely (AirDrop / `scp`) and
-    `chmod 600 ~/.ssh/id_* ~/.ssh/*.pem`.
+  you and then pauses: open 1Password, sign in, and under *Settings → Developer*
+  enable **both** "Integrate with 1Password CLI" (secrets) and "Use the SSH agent"
+  (ssh keys), then press Enter. Secrets render on the first pass.
+- **SSH keys** are served by the **1Password SSH agent** — the private key lives
+  in 1Password and is never written to disk. Store each key as an **SSH Key** item
+  (1Password can generate one for you), then add its **public** key to GitHub and
+  the Forge server. Nothing to copy between machines.
   - GitHub itself needs no key — `gh auth login` uses HTTPS + keychain.
 
 ## 2. One command
@@ -25,9 +22,8 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
 
 This installs chezmoi, clones `github.com/ajp/dotfiles`, prompts for **name,
-git email, machine type (personal/work), and SSH-key management**, then runs the
-full flow (Homebrew → externals/OMZ → dotfiles → brew bundle → shell → macOS →
-iTerm2).
+git email, and machine type (personal/work)**, then runs the full flow (Homebrew
+→ externals/OMZ → dotfiles → brew bundle → shell → macOS → iTerm2).
 
 > If Xcode Command Line Tools aren't installed, the first run will trigger their
 > install and stop — finish that, then re-run the command.
@@ -50,23 +46,18 @@ Create a set for each machine type you use:
 
 | Item | Fields |
 |------|--------|
-| `setup - chezmoi - <machine> - SSH id_ed25519` | document = private key (only if you opted in) |
 | `setup - chezmoi - <machine> - Forge` | `hostname` |
 
-Create them quickly with `op` (repeat with `<machine>` = `personal` then `work`):
+Create it quickly with `op` (repeat with `<machine>` = `personal` then `work`):
 
 ```sh
 M=personal   # or: M=work
-# generate a fresh key and store the private key in 1Password
-ssh-keygen -t ed25519 -C "$M $(date +%Y-%m)" -f ~/.ssh/id_ed25519
-op document create ~/.ssh/id_ed25519 --vault=Private \
-  --title="setup - chezmoi - $M - SSH id_ed25519"
 op item create --category="Secure Note" --vault=Private \
   --title="setup - chezmoi - $M - Forge" hostname=YOUR_HOST
 ```
 
-Then add the **public** key (`~/.ssh/id_ed25519.pub`) to GitHub and the Forge
-server's `authorized_keys`.
+(SSH keys are separate — they're SSH Key items served by the agent, not created
+here. See *Setting up an SSH key* below.)
 
 ## 4. Manual follow-ups
 
@@ -87,17 +78,27 @@ Some macOS defaults need a logout/restart to fully apply.
 
 ---
 
-## Rotating SSH keys
+## Setting up an SSH key (1Password SSH agent)
 
-1. Generate a replacement and overwrite the 1Password document:
-   ```sh
-   M=personal   # or work
-   ssh-keygen -t ed25519 -C "$M $(date +%Y-%m)" -f ~/.ssh/id_ed25519
-   op document edit "setup - chezmoi - $M - SSH id_ed25519" ~/.ssh/id_ed25519 --vault=Private
-   ```
-2. Add the new `~/.ssh/id_ed25519.pub` to GitHub + the Forge server, and remove
-   the old key from both.
-3. On your **other** machines: `chezmoi apply` re-pulls the new key from 1Password.
+Keys live in 1Password and are served by its SSH agent — never written to disk.
+Make a separate key per machine type so they can be revoked independently.
+
+1. In 1Password: **New Item → SSH Key → Generate** (Ed25519). Name it something
+   like `SSH — work laptop`. (Or `op item create --category="SSH Key" …`.)
+2. Copy the **public** key from the item and add it to:
+   - GitHub: `gh ssh-key add - --title "work-$(hostname)"` (paste), or the web UI
+   - Forge: append it to `~/.ssh/authorized_keys` on the server
+3. Ensure *Settings → Developer → Use the SSH agent* is on. Test: `ssh -T git@github.com`.
+
+This is **additive** — adding the work key doesn't touch your personal key.
+
+## Rotating a key
+
+1. Generate a new SSH Key item in 1Password (step 1 above).
+2. Add the new public key to GitHub + Forge; confirm it works.
+3. Remove the old public key from GitHub + Forge, and archive the old 1Password item.
+
+No `chezmoi apply` needed — the agent picks up the new key from 1Password directly.
 
 ---
 
