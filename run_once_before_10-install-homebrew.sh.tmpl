@@ -46,24 +46,23 @@ if ! command -v op >/dev/null 2>&1; then
   brew install --cask 1password-cli
 fi
 
-# Secret templates render immediately after this script, so op must be able to
-# authenticate now. `op vault list` triggers the app/biometric unlock if ready.
-if ! op vault list >/dev/null 2>&1; then
-  cat <<'MSG'
+# Secret templates render right after this script, so op must be able to read
+# now. Check ONCE (stdin from /dev/null so op can't drop into an interactive
+# prompt that wedges the terminal). If it can't, print setup steps and stop
+# cleanly — fix 1Password, then re-run `chezmoi apply`.
+if ! op vault list </dev/null >/dev/null 2>&1; then
+  cat <<'MSG' >&2
 
-==> 1Password isn't ready yet. Open 1Password, sign in, then under
-    Settings -> Developer enable BOTH:
-      - "Integrate with 1Password CLI"   (so secrets render)
-      - "Use the SSH agent"              (so ssh/git keys work)
-    (CLI-only alternative for secrets: run  eval "$(op signin)"  elsewhere.)
+==> 1Password CLI isn't ready, so secrets can't render yet. Set it up:
+      1. Open 1Password and sign in.
+      2. Settings -> Developer -> enable BOTH
+         "Integrate with 1Password CLI" and "Use the SSH agent".
+      3. Quit 1Password (Cmd-Q) and REOPEN it — the toggles only activate
+         after a restart. Make sure it's unlocked.
+      4. Verify in a terminal:  op vault list   (should list your vaults)
+   Then re-run:  chezmoi apply
 
 MSG
-  if [ -t 0 ]; then
-    while ! op vault list >/dev/null 2>&1; do
-      read -r -p "Press Enter once 1Password CLI is ready (Ctrl-C to skip)... " _ || break
-    done
-    echo "==> 1Password CLI ready."
-  else
-    echo "Non-interactive run — finish 1Password setup, then re-run 'chezmoi apply'."
-  fi
+  exit 1
 fi
+echo "==> 1Password CLI ready."

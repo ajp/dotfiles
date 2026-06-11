@@ -2,18 +2,35 @@
 
 Provisioning a fresh macOS machine with chezmoi.
 
-## 1. Prereqs you bring with you
+## 1. Set up 1Password first (do this and the rest just flows)
 
-- **1Password account creds** (email + Secret Key, or your Emergency Kit). You do
-  **not** need 1Password pre-installed — the bootstrap installs the app + CLI for
-  you and then pauses: open 1Password, sign in, and under *Settings → Developer*
-  enable **both** "Integrate with 1Password CLI" (secrets) and "Use the SSH agent"
-  (ssh keys), then press Enter. Secrets render on the first pass.
-- **SSH keys** are served by the **1Password SSH agent** — the private key lives
-  in 1Password and is never written to disk. Store each key as an **SSH Key** item
-  (1Password can generate one for you), then add its **public** key to GitHub and
-  the Forge server. Nothing to copy between machines.
-  - GitHub itself needs no key — `gh auth login` uses HTTPS + keychain.
+Everything secret comes from 1Password via the `op` CLI. If `op` can read your
+vault before you run the installer, the whole thing completes in one pass. If
+not, the installer stops cleanly at the 1Password step and tells you to do this —
+so either way you end up here.
+
+**Fastest (one pass):** before running the installer, install the **1Password
+app** (download from [1password.com](https://1password.com/downloads/mac/) on a
+bare Mac), then:
+
+1. Sign in (email + Secret Key / Emergency Kit).
+2. **Settings → Developer →** enable **both** "Integrate with 1Password CLI" and
+   "Use the SSH agent".
+3. **Quit 1Password (⌘Q) and reopen it** — the toggles only activate after a
+   restart. Unlock it.
+4. Create the signing/auth key: **New Item → SSH Key → Generate** (Ed25519),
+   titled **`setup - chezmoi - SSH key`**, in your **`Personal`** vault.
+
+**Verify** (install the CLI first if needed: `brew install --cask 1password-cli`):
+```sh
+op vault list        # should Touch-ID prompt and list your vaults
+```
+Once that lists vaults, the installer's 1Password check passes on the first try.
+
+> SSH keys are served by the **1Password SSH agent** — the private key never
+> touches disk. Afterward, add the key's **public** half to GitHub (as both an
+> Authentication and a Signing key). GitHub *cloning* needs no key —
+> `gh auth login` uses HTTPS.
 
 ## 2. One command
 
@@ -31,22 +48,20 @@ iTerm2).
 
 > The `brew bundle` step is long (downloads GBs of apps) and prints as it goes.
 
-## 3. If secrets didn't populate
+## 3. If the run stopped at the 1Password step
 
-If you ran apply before 1Password CLI was ready, the ssh templates render empty.
-Fix:
+If `op` wasn't ready, the installer prints setup instructions and **exits cleanly**
+(it no longer hangs or pauses). Do step 1 — sign in, enable both toggles,
+**restart the 1Password app**, confirm `op vault list` lists your vaults — then
+resume:
 
 ```sh
-op signin            # or enable the app integration (step 1)
 chezmoi apply
 ```
 
-Required 1Password items (vault `Personal`), named
-`setup - chezmoi - <machine> - <name>` where `<machine>` is `personal` or `work`.
-Create a set for each machine type you use:
-
-Secrets are minimal now — the only thing rendered from 1Password at apply time is
-the commit-signing key (`setup - chezmoi - SSH key`), and only if you opted in.
+The only secret rendered at apply time is the commit-signing key
+(`setup - chezmoi - SSH key` in the `Personal` vault), and only if you opted into
+signing.
 
 **Optional:** the Forge host in `10-personal` is disabled by default. To enable
 it, create `setup - chezmoi - <machine> - Forge` (field `hostname`) and restore
