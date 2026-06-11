@@ -11,6 +11,13 @@ eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew/bin/brew{{ else }}/usr/lo
 
 SRC="{{ .chezmoi.sourceDir }}"
 
+# Warm sudo and keep it warm for the whole bundle, so casks that need admin
+# don't re-prompt for your password every few minutes. Prompts once here.
+sudo -v
+( while true; do sudo -n true; sleep 60; kill -0 "$$" 2>/dev/null || exit; done ) &
+SUDO_KEEPALIVE_PID=$!
+trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT
+
 echo "==> brew bundle: common (slow step; output streams below)"
 brew bundle install --file="$SRC/Brewfile" --no-upgrade
 
