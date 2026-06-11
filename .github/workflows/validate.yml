@@ -61,4 +61,8 @@ jobs:
 
       - name: Validate JSON
         run: |
-          for f in $(git ls-files '*.json'); do echo "jq $f"; jq -e . "$f" >/dev/null; done
+          rc=0
+          while IFS= read -r -d '' f; do
+            echo "jq $f"; jq -e . "$f" >/dev/null || rc=1
+          done < <(git ls-files -z '*.json')
+          exit $rc
