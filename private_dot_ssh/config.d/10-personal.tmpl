@@ -7,5 +7,5 @@
 # --- Personal server (Forge) ---
 # Key is served by the 1Password SSH agent (see 00-defaults), not a file.
 Host ajp.net pshosting forge
-    HostName {{ onepasswordRead (printf "op://%s/%s - %s - Forge/hostname" .opVault .opPrefix .machine) }}
+    HostName {{ template "op-read" (dict "ctx" . "item" "Forge" "field" "hostname") }}
     User forge

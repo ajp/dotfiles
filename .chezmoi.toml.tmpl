@@ -1,11 +1,16 @@
 {{- $name := promptStringOnce . "name" "Full name" -}}
 {{- $email := promptStringOnce . "email" "Git email" -}}
 {{- $machine := promptChoiceOnce . "machine" "Machine type" (list "personal" "work") -}}
+{{- /* Sign git commits with the 1Password SSH key. Requires a 1Password SSH Key
+       item named "<opPrefix> - <machine> - SSH key". Default off so a machine
+       without that item doesn't fail to apply. */ -}}
+{{- $signCommits := promptBoolOnce . "signCommits" "Sign git commits with 1Password SSH key?" false -}}
 
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
     machine = {{ $machine | quote }}
+    signCommits = {{ $signCommits }}
 
 # Auto-commit (and push) changes made via `chezmoi edit` / `chezmoi add`, so the
 # source repo stays in sync across machines.

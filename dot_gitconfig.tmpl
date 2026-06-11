@@ -1,6 +1,20 @@
 [user]
     name = {{ .name | quote }}
     email = {{ .email | quote }}
+{{- if .signCommits }}
+    signingkey = "{{ template "op-read" (dict "ctx" . "item" "SSH key" "field" "public key") }}"
+{{- end }}
+{{ if .signCommits -}}
+# Sign commits/tags with the 1Password SSH key via its agent.
+[gpg]
+    format = ssh
+[gpg "ssh"]
+    program = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign"
+[commit]
+    gpgsign = true
+[tag]
+    gpgsign = true
+{{ end -}}
 
 [init]
     defaultBranch = main

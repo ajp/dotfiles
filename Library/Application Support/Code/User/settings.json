@@ -1,0 +1,9 @@
+{
+  "workbench.colorTheme": "Default High Contrast",
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "explorer.confirmDragAndDrop": false,
+  "explorer.confirmDelete": false,
+  "typescript.updateImportsOnFileMove.enabled": "never",
+  "claudeCode.preferredLocation": "panel"
+}

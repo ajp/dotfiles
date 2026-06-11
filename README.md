@@ -11,15 +11,15 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
 
 On first run chezmoi prompts for: **name**, **git email**, **machine type**
-(`personal` / `work`), and whether to **manage SSH keys from 1Password**. Then it:
+(`personal` / `work`), and whether to **sign git commits** with 1Password. Then it:
 
 1. **before** — install Xcode CLT, Rosetta, Homebrew, and 1Password (app + CLI),
    then pause until `op` can authenticate so secrets render on the first pass
 2. **externals** — clone Oh-My-Zsh, Powerlevel10k, and zsh plugins (kept updated)
-3. **apply dotfiles** — zsh, git, tmux, p10k, ssh, ddev, gh, iTerm2
+3. **apply dotfiles** — zsh, git, tmux, p10k, ssh, ddev, gh, iTerm2, editors
    (secrets rendered from 1Password)
-4. **after** — `brew bundle` the full Brewfile, set zsh as default shell, apply
-   macOS defaults, point iTerm2 at its prefs
+4. **after** — `brew bundle` the common + per-machine Brewfile, set zsh as default
+   shell, apply macOS defaults, point iTerm2 at its prefs
 
 See **[SETUP.md](SETUP.md)** for the full walkthrough (including `op signin` and
 SSH keys).
@@ -53,12 +53,12 @@ Add a new file to management: `chezmoi add ~/.config/foo/bar`.
 | Area | Files |
 |------|-------|
 | Shell | `dot_zshrc`, `dot_zprofile`, `dot_zshrc.local`, `dot_p10k.zsh` |
-| Git | `dot_gitconfig.tmpl` (identity from prompt), `dot_gitignore_global` |
+| Git | `dot_gitconfig.tmpl` (identity from prompt; optional 1Password commit signing), `dot_gitignore_global` |
 | Terminal | `dot_tmux.conf`, `dot_config/iterm2/…` |
 | SSH | `private_dot_ssh/config`, `…/config.d/00-defaults`, `…/10-personal.tmpl` |
 | Tools | `dot_config/private_gh/…`, `dot_ddev/…` |
-| Claude Code | `dot_claude/settings.json` (settings only — not session/auth state) |
-| Packages | `Brewfile` (installed by `run_onchange_after_20-brew-bundle`) |
+| Editors | `dot_claude/settings.json`, `Library/.../Code/User/settings.json` (settings only) |
+| Packages | `Brewfile` (common) + `Brewfile.{work,personal}` (per machine) |
 | Externals | Oh-My-Zsh + p10k + plugins via `.chezmoiexternal.toml` |
 | Provisioning | `run_*` scripts (Homebrew, shell, macOS, iTerm2) |
 
@@ -73,18 +73,21 @@ for every machine type you use (`personal` and/or `work`):
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
 | `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
+| `setup - chezmoi - <machine> - SSH key` | SSH Key item (`public key`) | ssh agent + commit signing |
 
 Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
 machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or
 enable the 1Password app's CLI integration) before `chezmoi apply`.
+(`.chezmoitemplates/op-read` builds these references.)
 
-**SSH keys** are *not* templated — they're served by the **1Password SSH agent**
-(enable *Settings → Developer → Use the SSH agent*). Store each key as an SSH Key
-item in 1Password; the private key is never written to disk. `00-defaults` points
-ssh at the agent socket.
+**SSH keys** are served by the **1Password SSH agent** (enable *Settings →
+Developer → Use the SSH agent*) — the private key is never written to disk.
+Name the **SSH Key** item `setup - chezmoi - <machine> - SSH key`; if you opt into
+commit signing, git uses that item's public key with `op-ssh-sign`.
 
 ## Packages
 
-`Brewfile` is the single source of truth. Edit it, then `chezmoi apply` — the
-`run_onchange` script re-runs `brew bundle` automatically when the file changes.
-Personal apps (media/games/hardware) are commented out; uncomment per machine.
+`Brewfile` holds the common packages; `Brewfile.work` and `Brewfile.personal`
+hold per-machine extras (media/games live in `Brewfile.personal`). The
+`run_onchange` script installs `Brewfile` then `Brewfile.<machine>` and re-runs
+automatically when either changes. Edit the relevant file, then `chezmoi apply`.

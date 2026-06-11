@@ -35,8 +35,11 @@ jobs:
           name = "CI"
           email = "ci@example.com"
           machine = "personal"
-          manageSshKeys = false
+          signCommits = true
           EOF
+
+      - name: chezmoi doctor
+        run: chezmoi doctor || true
 
       - name: chezmoi dry-run apply (renders every template)
         run: |

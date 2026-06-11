@@ -148,66 +148,8 @@ cask "font-meslo-lg-nerd-font"
 cask "font-jetbrains-mono-nerd-font"
 cask "font-fira-code-nerd-font"
 
-# =============================================================================
-# Personal apps — commented out (uncomment per machine as desired)
-# =============================================================================
-
-# --- Media & Audio/Video ---
-# cask "spotify"
-# cask "vlc"
-# cask "plex-htpc"
-# cask "plex-media-server"
-# cask "plexamp"
-# cask "edde746/plezy/plezy"
-# cask "audacity"
-# cask "audiobook-builder"
-# cask "handbrake-app"
-# cask "makemkv"
-# cask "mp3tag"
-# cask "musicbrainz-picard"
-# cask "screenflow"
-# cask "4k-youtube-to-mp3"
-# cask "youtube-to-mp3"
-# cask "send-to-kindle"
-# cask "burn"
-# cask "adobe-creative-cloud"
-
-# --- Games & Streaming ---
-# cask "steam"
-# cask "endless-sky"
-# cask "endless-sky-high-dpi"
-# cask "godot"
-# cask "moonlight"
-# cask "parsec"
-
-# --- Backup & Disk ---
-# cask "carbon-copy-cloner"
-# cask "superduper"
-# cask "disk-drill"
-# cask "drivedx"
-# cask "balenaetcher"
-# cask "timemachineeditor"
-# cask "timemachinestatus"
-
-# --- System / Hardware-specific ---
-# cask "opencore-patcher"
-# cask "switchresx"
-# cask "logi-options+"
-# cask "logitune"
-# cask "android-platform-tools"
-# cask "microsoft-auto-update"
-# cask "geekbench"
-# cask "windows-app"
-
-# --- Sync & Misc ---
-# cask "resilio-sync"
-# cask "syncthing-app"
-# cask "basecamp"
-# cask "focus"
-# cask "screenfocus"
-# cask "xscope"
-# cask "path-finder"
-# cask "transmission"
+# Personal apps (media/games/etc.) live in Brewfile.personal, installed only on
+# `personal` machines. Work-specific tools go in Brewfile.work.
 
 # =============================================================================
 # VS Code Extensions

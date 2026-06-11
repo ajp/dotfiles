@@ -1,0 +1,6 @@
+# Brewfile.work — installed ON TOP of the common Brewfile on `work` machines
+# only (picked by your chezmoi `machine` answer). Add work-specific tools here.
+
+# cask "microsoft-office"
+# cask "zoom"
+# brew "awscli"

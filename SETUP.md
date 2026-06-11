@@ -22,8 +22,9 @@ sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
 
 This installs chezmoi, clones `github.com/ajp/dotfiles`, prompts for **name,
-git email, and machine type (personal/work)**, then runs the full flow (Homebrew
-→ externals/OMZ → dotfiles → brew bundle → shell → macOS → iTerm2).
+git email, machine type (personal/work), and whether to sign commits**, then runs
+the full flow (Homebrew → externals/OMZ → dotfiles → brew bundle → shell → macOS →
+iTerm2).
 
 > If Xcode Command Line Tools aren't installed, the first run will trigger their
 > install and stop — finish that, then re-run the command.
@@ -83,10 +84,12 @@ Some macOS defaults need a logout/restart to fully apply.
 Keys live in 1Password and are served by its SSH agent — never written to disk.
 Make a separate key per machine type so they can be revoked independently.
 
-1. In 1Password: **New Item → SSH Key → Generate** (Ed25519). Name it something
-   like `SSH — work laptop`. (Or `op item create --category="SSH Key" …`.)
+1. In 1Password: **New Item → SSH Key → Generate** (Ed25519). Name it
+   **`setup - chezmoi - <machine> - SSH key`** (e.g. `… - work - SSH key`) so
+   commit signing can find it.
 2. Copy the **public** key from the item and add it to:
-   - GitHub: `gh ssh-key add - --title "work-$(hostname)"` (paste), or the web UI
+   - GitHub: `gh ssh-key add - --title "work-$(hostname)"` (paste), or the web UI.
+     For commit signing, also add it again as a **Signing Key** on GitHub.
    - Forge: append it to `~/.ssh/authorized_keys` on the server
 3. Ensure *Settings → Developer → Use the SSH agent* is on. Test: `ssh -T git@github.com`.
 

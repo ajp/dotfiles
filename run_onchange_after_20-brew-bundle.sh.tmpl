@@ -1,11 +1,18 @@
 #!/bin/bash
-# Install everything from the Brewfile. Runs again automatically whenever the
-# Brewfile changes (the hash below changes, re-triggering run_onchange).
+# Install the common Brewfile, then the machine-specific one (Brewfile.work or
+# Brewfile.personal). Re-runs automatically when any of those files change (the
+# hashes below change, re-triggering run_onchange).
 #
-# Brewfile hash: {{ include "Brewfile" | sha256sum }}
+# Brewfile hash:          {{ include "Brewfile" | sha256sum }}
+# Brewfile.{{ .machine }} hash: {{ include (printf "Brewfile.%s" .machine) | sha256sum }}
 set -euo pipefail
 
 eval "$({{ if eq .chezmoi.arch "arm64" }}/opt/homebrew/bin/brew{{ else }}/usr/local/bin/brew{{ end }} shellenv)"
 
-echo "==> brew bundle (this is the slow step; output streams below)"
-brew bundle install --file="{{ .chezmoi.sourceDir }}/Brewfile" --no-upgrade
+SRC="{{ .chezmoi.sourceDir }}"
+
+echo "==> brew bundle: common (slow step; output streams below)"
+brew bundle install --file="$SRC/Brewfile" --no-upgrade
+
+echo "==> brew bundle: {{ .machine }}"
+brew bundle install --file="$SRC/Brewfile.{{ .machine }}" --no-upgrade

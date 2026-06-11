@@ -1,0 +1,4 @@
+{{- /* Reusable 1Password reference builder.
+       Usage: {{ template "op-read" (dict "ctx" . "item" "Forge" "field" "hostname") }}
+       Resolves to: op://<opVault>/<opPrefix> - <machine> - <item>/<field> */ -}}
+{{- onepasswordRead (printf "op://%s/%s - %s - %s/%s" .ctx.opVault .ctx.opPrefix .ctx.machine .item .field) | trim -}}
