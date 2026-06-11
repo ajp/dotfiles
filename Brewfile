@@ -2,15 +2,15 @@
 # Install everything:   brew bundle --file=Brewfile
 # Re-dump from system:  brew bundle dump --force --describe --file=Brewfile
 #
-# Convention: dev + productivity essentials are active. Personal apps
-# (media, games, hardware utilities, backup) are commented out so a fresh
-# machine only installs what's needed for work. Uncomment what you want.
+# This is the COMMON Brewfile (installed on every machine). Per-machine extras
+# live in Brewfile.personal (media/games/etc.) and Brewfile.work, layered on top
+# based on your chezmoi `machine` answer.
 
 # =============================================================================
 # Taps
 # =============================================================================
-tap "homebrew/bundle"
-tap "homebrew/services"
+# (homebrew/bundle and homebrew/services are built into Homebrew core now —
+# tapping them is deprecated, so they're omitted.)
 tap "ddev/ddev"
 tap "edde746/plezy", "https://github.com/edde746/plezy"
 tap "reebz/claude-battery"
