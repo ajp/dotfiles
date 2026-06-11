@@ -73,7 +73,7 @@ for every machine type you use (`personal` and/or `work`):
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
 | `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` |
-| `setup - chezmoi - <machine> - SSH key` | SSH Key item (`public key`) | ssh agent + commit signing |
+| `setup - chezmoi - SSH key` | SSH Key item (`public key`) | ssh agent + commit signing (shared across machines) |
 
 Example: a `work` machine reads `setup - chezmoi - work - Forge`; a `personal`
 machine reads `setup - chezmoi - personal - Forge`. Sign in with `op signin` (or
@@ -82,8 +82,9 @@ enable the 1Password app's CLI integration) before `chezmoi apply`.
 
 **SSH keys** are served by the **1Password SSH agent** (enable *Settings →
 Developer → Use the SSH agent*) — the private key is never written to disk.
-Name the **SSH Key** item `setup - chezmoi - <machine> - SSH key`; if you opt into
-commit signing, git uses that item's public key with `op-ssh-sign`.
+Name the **SSH Key** item `setup - chezmoi - SSH key` (one key shared across
+machines); if you opt into commit signing, git uses that item's public key with
+`op-ssh-sign`. (Want per-machine keys instead? Re-add the `<machine>` segment.)
 
 ## Packages
 

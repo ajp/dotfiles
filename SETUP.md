@@ -85,8 +85,8 @@ Keys live in 1Password and are served by its SSH agent — never written to disk
 Make a separate key per machine type so they can be revoked independently.
 
 1. In 1Password: **New Item → SSH Key → Generate** (Ed25519). Name it
-   **`setup - chezmoi - <machine> - SSH key`** (e.g. `… - work - SSH key`) so
-   commit signing can find it.
+   **`setup - chezmoi - SSH key`** (one key shared across machines) so commit
+   signing can find it.
 2. Copy the **public** key from the item and add it to:
    - GitHub: `gh ssh-key add - --title "work-$(hostname)"` (paste), or the web UI.
      For commit signing, also add it again as a **Signing Key** on GitHub.

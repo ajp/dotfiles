@@ -2,7 +2,7 @@
     name = {{ .name | quote }}
     email = {{ .email | quote }}
 {{- if .signCommits }}
-    signingkey = "{{ template "op-read" (dict "ctx" . "item" "SSH key" "field" "public key") }}"
+    signingkey = "{{ onepasswordRead (printf "op://%s/%s - SSH key/public key" .opVault .opPrefix) | trim }}"
 {{- end }}
 {{ if .signCommits -}}
 # Sign commits/tags with the 1Password SSH key via its agent.
