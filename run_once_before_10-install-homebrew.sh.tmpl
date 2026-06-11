@@ -46,23 +46,21 @@ if ! command -v op >/dev/null 2>&1; then
   brew install --cask 1password-cli
 fi
 
-# Secret templates render right after this script, so op must be able to read
-# now. Check ONCE (stdin from /dev/null so op can't drop into an interactive
-# prompt that wedges the terminal). If it can't, print setup steps and stop
-# cleanly — fix 1Password, then re-run `chezmoi apply`.
-if ! op vault list </dev/null >/dev/null 2>&1; then
+# Advisory check: secret templates render right after this script. We do NOT
+# hard-fail here — `op vault list` can be flaky (locked app, etc.) even when the
+# actual `op read` for a secret works. So just warn; the real enforcement is the
+# secret read during apply. Stdin from /dev/null keeps op from going interactive.
+if op vault list </dev/null >/dev/null 2>&1; then
+  echo "==> 1Password CLI ready."
+else
   cat <<'MSG' >&2
 
-==> 1Password CLI isn't ready, so secrets can't render yet. Set it up:
-      1. Open 1Password and sign in.
-      2. Settings -> Developer -> enable BOTH
-         "Integrate with 1Password CLI" and "Use the SSH agent".
-      3. Quit 1Password (Cmd-Q) and REOPEN it — the toggles only activate
-         after a restart. Make sure it's unlocked.
-      4. Verify in a terminal:  op vault list   (should list your vaults)
-   Then re-run:  chezmoi apply
+==> NOTE: 1Password CLI couldn't list a vault. The install will continue; if it
+    later fails on a secret (e.g. the commit-signing key), set up 1Password:
+      1. Sign in. Settings -> Developer -> enable "Integrate with 1Password CLI"
+         AND "Use the SSH agent".
+      2. Quit 1Password (Cmd-Q), reopen it, unlock it.
+      3. Verify:  op vault list      Then re-run:  chezmoi apply
 
 MSG
-  exit 1
 fi
-echo "==> 1Password CLI ready."
