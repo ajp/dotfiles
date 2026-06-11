@@ -20,6 +20,7 @@ tap "reebz/claude-battery"
 # =============================================================================
 
 # Shell & prompt
+brew "zsh"                # newer zsh; set as default login shell
 brew "powerlevel10k"      # Zsh theme
 brew "thefuck"            # Correct mistyped console commands
 brew "tmux"               # Terminal multiplexer

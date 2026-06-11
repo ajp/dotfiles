@@ -1,12 +1,14 @@
 #!/bin/bash
 # macOS system preferences. run_onchange: re-applies whenever this file changes.
-set -euo pipefail
+# Best-effort: NO `set -e`, so a single protected/rejected domain (some need
+# Full Disk Access or are SIP-protected) doesn't abort the whole script.
+set -uo pipefail
 
 echo "==> Applying macOS defaults"
 
 # --- General UI ---
 defaults write NSGlobalDomain AppleInterfaceStyle -string "Dark"
-defaults write com.apple.universalaccess reduceMotion -bool false
+# (com.apple.universalaccess is SIP-protected — can't be set via `defaults`.)
 
 # --- Keyboard ---
 defaults write NSGlobalDomain KeyRepeat -int 2
