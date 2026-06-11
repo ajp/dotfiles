@@ -13,7 +13,7 @@ dir (`~/.local/share/chezmoi`), and applies everything:
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
 
-**Before you run it**, in 1Password (vault `Private`) create the SSH Key item
+**Before you run it**, in 1Password (vault `Personal`) create the SSH Key item
 `setup - chezmoi - SSH key` (used by the ssh agent + commit signing). That's the
 only required item — see [Secrets](#secrets-1password).
 
@@ -80,11 +80,11 @@ update` on your other machines to pull it in.
 ## Secrets (1Password)
 
 Secrets are pulled from 1Password via `op` at apply time — nothing secret is
-stored in this repo. Items live in the `Private` vault and follow the convention
+stored in this repo. Items live in the `Personal` vault and follow the convention
 **`setup - chezmoi - [<machine> -] <name>`** (prefix + vault set in
 `.chezmoidata.yaml`). Only the **SSH key** is required; Forge is optional:
 
-| Item (vault `Private`) | Fields | Used by |
+| Item (vault `Personal`) | Fields | Used by |
 |------------------------|--------|---------|
 | `setup - chezmoi - SSH key` | SSH Key item (`public key`) | ssh agent + commit signing (shared across machines) |
 | `setup - chezmoi - <machine> - Forge` | `hostname` | ssh `10-personal` *(optional — disabled by default)* |

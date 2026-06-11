@@ -41,7 +41,7 @@ op signin            # or enable the app integration (step 1)
 chezmoi apply
 ```
 
-Required 1Password items (vault `Private`), named
+Required 1Password items (vault `Personal`), named
 `setup - chezmoi - <machine> - <name>` where `<machine>` is `personal` or `work`.
 Create a set for each machine type you use:
 
@@ -54,7 +54,7 @@ the Host block (see notes in that file):
 
 ```sh
 M=work   # or personal
-op item create --category="Secure Note" --vault=Private \
+op item create --category="Secure Note" --vault=Personal \
   --title="setup - chezmoi - $M - Forge" hostname=YOUR_HOST
 ```
 
