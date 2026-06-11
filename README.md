@@ -5,10 +5,17 @@ Brewfile and secrets pulled from 1Password.
 
 ## New machine
 
+**You don't clone this repo by hand** — `chezmoi init` does it for you. One
+command installs chezmoi, clones `github.com/ajp/dotfiles` into its own source
+dir (`~/.local/share/chezmoi`), and applies everything:
+
 ```sh
-# Installs chezmoi, clones this repo, and applies everything
 sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply ajp
 ```
+
+**Before you run it**, in 1Password (vault `Private`) create the SSH Key item
+`setup - chezmoi - SSH key` (used by the ssh agent + commit signing). That's the
+only required item — see [Secrets](#secrets-1password).
 
 On first run chezmoi prompts for: **name**, **git email**, **machine type**
 (`personal` / `work`), and whether to **sign git commits** with 1Password. Then it:
@@ -38,15 +45,23 @@ update` on the others pulls + applies.
 
 ## Daily use
 
+The source repo lives at `~/.local/share/chezmoi` (get there with `chezmoi cd`).
+You edit there (or via `chezmoi edit`), apply to `$HOME`, and commits are
+auto-pushed so other machines can `chezmoi update`.
+
 ```sh
-chezmoi edit ~/.zshrc      # edit a managed file (opens the source)
-chezmoi diff               # preview pending changes
-chezmoi apply              # apply changes
-chezmoi cd                 # jump to the source repo; git pull/commit/push here
-chezmoi update             # git pull + apply in one step
+chezmoi edit ~/.zshrc      # edit a managed file (opens its source, e.g. dot_zshrc)
+chezmoi diff               # preview what apply would change
+chezmoi apply              # apply source -> $HOME
+chezmoi add ~/.config/foo  # start managing a new file (copies it into the source)
+chezmoi cd                 # drop into the source repo for git work; `exit` to leave
+chezmoi update             # git pull + apply (use on your *other* machines)
+chezmoi managed            # list every path chezmoi manages
 ```
 
-Add a new file to management: `chezmoi add ~/.config/foo/bar`.
+Typical change: `chezmoi edit ~/.zshrc` → `chezmoi apply`. Because `autoCommit`/
+`autoPush` are on, that edit is committed and pushed automatically; run `chezmoi
+update` on your other machines to pull it in.
 
 ## What's managed
 
@@ -64,11 +79,10 @@ Add a new file to management: `chezmoi add ~/.config/foo/bar`.
 
 ## Secrets (1Password)
 
-Templates ending in `.tmpl` pull secrets via the `op` CLI at apply time — nothing
-secret is ever stored in this repo. Items follow the naming convention
-**`setup - chezmoi - <machine> - <name>`** (prefix + vault set in
-`.chezmoidata.yaml`), so each machine type pulls its own set — create the items
-for every machine type you use (`personal` and/or `work`):
+Secrets are pulled from 1Password via `op` at apply time — nothing secret is
+stored in this repo. Items live in the `Private` vault and follow the convention
+**`setup - chezmoi - [<machine> -] <name>`** (prefix + vault set in
+`.chezmoidata.yaml`). Only the **SSH key** is required; Forge is optional:
 
 | Item (vault `Private`) | Fields | Used by |
 |------------------------|--------|---------|
