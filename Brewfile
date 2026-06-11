@@ -25,6 +25,7 @@ brew "thefuck"            # Correct mistyped console commands
 brew "tmux"               # Terminal multiplexer
 
 # Dev tooling
+brew "chezmoi"            # this dotfiles manager (keeps it on PATH)
 brew "gh"                 # GitHub CLI
 brew "lazygit"            # Git TUI
 brew "lazydocker"         # Docker TUI
