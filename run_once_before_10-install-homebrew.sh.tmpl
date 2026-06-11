@@ -15,6 +15,16 @@ if ! xcode-select -p >/dev/null 2>&1; then
   exit 1
 fi
 
+# Warm the sudo credential cache so the NONINTERACTIVE Homebrew install (and
+# Rosetta / cask installs) don't fail with "Need sudo access". Also fails fast
+# with a clear message if this user isn't an admin.
+echo "==> Caching sudo credentials (you must be an Administrator)"
+if ! sudo -v; then
+  echo "ERROR: '$USER' needs admin rights. Make it an Administrator in" >&2
+  echo "System Settings > Users & Groups, then re-run chezmoi." >&2
+  exit 1
+fi
+
 {{ if eq .chezmoi.arch "arm64" -}}
 echo "==> Rosetta 2"
 if ! /usr/bin/pgrep -q oahd; then
